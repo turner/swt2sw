@@ -2,19 +2,19 @@
 #coding: utf8 
 
 __description__ = \
-"""
-Converting *.sw to *.cndb format
-"""
+    """
+    Converting *.sw to *.cndb format
+    """
 
 __author__ = "Douglass Turner"
-__date__   = "Mar/2024"
+__date__   = "3 April 2024"
 
 ################################################################
 # 
-# Trajectories file *.sw to Compacted Nucleome Data Bank format .cndb
+# Convert Spacewalk files (.sw) to Compacted Nucleome Data Bank format (.cndb)
 #
 # usage:
-#  ./ndb2cndb.py -f file.ndb -n name_CNDB_file
+#  ./spacewalk2cndb.py -f spacewalk_file.sw -n cndb_file_name
 #
 ################################################################
 
@@ -34,7 +34,7 @@ try:
     print('Chosen file: {:}'.format(arguments.f.name))
 
 except IOError as msg:
-    parser.error(str(msg))                    
+    parser.error(str(msg))
 
 def to_float(value):
     try:
@@ -51,20 +51,20 @@ def initializeHeader(spacewalkFile, spacewalkMetaData):
     entries = None
     if first_line.startswith('#'):
         entries = first_line[2:].split()  #[2:] because have ##
-    
+
     for entry in entries:
         key, value = entry.split('=')
         spacewalkMetaData[key] = value
 
     hash = {
-    'version' : '1.0.0',
-    'info' : 'Encode',
-    'title': 'The Nucleome Data Bank: Web-based Resources Simulate and Analyze the Three-Dimensional Genome',
-    'expdta' : '',
-    'author' : 'Antonio B Oliveira Junior',
-    'cycle' : '',
-    'date' : str(datetime.now()),
-    'chains' : ''
+        'version' : '1.0.0',
+        'info' : 'Encode',
+        'title': 'The Nucleome Data Bank: Web-based Resources Simulate and Analyze the Three-Dimensional Genome',
+        'expdta' : '',
+        'author' : 'Antonio B Oliveira Junior',
+        'cycle' : '',
+        'date' : str(datetime.now()),
+        'chains' : ''
     }
 
     hash.update(spacewalkMetaData)
