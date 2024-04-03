@@ -30,8 +30,8 @@ parser.add_argument('-n', action='store', default='chromatin', dest='arg_name', 
 
 try:
     arguments = parser.parse_args()
-    print('################################################')
-    print('Chosen file: {:}'.format(arguments.f.name))
+    # print('################################################')
+    # print('Chosen file: {:}'.format(arguments.f.name))
 
 except IOError as msg:
     parser.error(str(msg))
@@ -58,13 +58,8 @@ def initializeHeader(spacewalkFile, spacewalkMetaData):
 
     hash = {
         'version' : '1.0.0',
-        'info' : 'Encode',
-        'title': 'The Nucleome Data Bank: Web-based Resources Simulate and Analyze the Three-Dimensional Genome',
-        'expdta' : '',
-        'author' : 'Antonio B Oliveira Junior',
-        'cycle' : '',
-        'date' : str(datetime.now()),
-        'chains' : ''
+        'author' : 'Douglass Turner',
+        'date' : str(datetime.now())
     }
 
     hash.update(spacewalkMetaData)
@@ -143,11 +138,7 @@ def traverseTrackList(file):
     for line in file:
         tokens = line.split()
         if 'trace' == tokens[0]:
-            token_index = int(tokens[1])
-            if 59 == token_index:
-                print('token-index ' + str(token_index))
-
-            indices.append(token_index)
+            indices.append(int(tokens[1]))
             harvestXYZ(indices[-1])
 
         elif 6 == len(tokens):
@@ -175,7 +166,7 @@ header = cndbf.create_group('Header')
 metaData = initializeHeader(spacewalkFile, spacewalkMetaData)
 header.attrs.update(metaData)
 
-print('Converting file...')
+print('Converting {:}'.format(arguments.f.name))
 
 # discard: chromosome	start	end	x	y	z
 dev_null = spacewalkFile.readline()
@@ -212,8 +203,6 @@ root.create_dataset('time', data=np.array(frame))
 
 cndbf.close()
 
-print('Finished!')
-
 e_time = time.time()
 elapsed = e_time - b_time
-print('Ran in %.3f sec' % elapsed)
+print('File conversion completed in %.3f seconds' % elapsed)
