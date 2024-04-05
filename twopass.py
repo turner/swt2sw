@@ -42,6 +42,9 @@ def to_float(value):
 
 b_time = time.time()
 
+name = arguments.arg_name
+cndbf = h5py.File(name + '.cndb', 'w')
+
 spacewalkFile = arguments.f
 spacewalkMetaData = {}
 def initialize_header(spacewalkFile, spacewalkMetaData):
@@ -80,13 +83,33 @@ def create_region_list(file):
 
 def harvest_xyz(xyz_list, tr_group):
     xyz_stack = np.column_stack((xyz_list[1], xyz_list[2], xyz_list[3]))
-    _string = str(region_dictionary[xyz_list[0]])
-    stmt = 'trace group(' + tr_group.name + ') ' + 'dataset(' + _string + ')'
-    print(stmt)
-    tr_group.create_dataset(_string, data=xyz_stack)
+    region_id = str(region_dictionary[xyz_list[0]])
 
+    if len(xyz_list[1]) > 1:
+        candidate_name = tr_group.name + '/' + region_id
+        stmt = 'harvest xyz for dataset(' + candidate_name + ')'
+        print(stmt)
+        if candidate_name in cndbf:
+            dataset = cndbf[candidate_name]
+            dataset_size = dataset.shape[0]
+            xyz_size = xyz_stack.shape[0]
+            new_size = dataset_size + xyz_size
+            dataset.resize(new_size, axis=0)
+            dataset[-xyz_stack.shape[0]:] = xyz_stack
+        else:
+            tr_group.create_dataset(region_id, data=xyz_stack, maxshape=(None,3))
+    else:
+        candidate_name = tr_group.name + '/centroid'
+        if candidate_name in cndbf:
+            dataset = cndbf[candidate_name]
+            dataset_size = dataset.shape[0]
+            xyz_size = xyz_stack.shape[0]
+            new_size = dataset_size + xyz_size
+            dataset.resize(new_size, axis=0)
+            dataset[-xyz_stack.shape[0]:] = xyz_stack
+        else:
+            tr_group.create_dataset('centroid', data=xyz_stack, maxshape=(None, 3))
 def create_spatial_positon_datasets(file, sp_group):
-    hash = None
     xyz_list = None
     current_key = None
     trace_group = None
@@ -97,15 +120,9 @@ def create_spatial_positon_datasets(file, sp_group):
             trace_group_name = str(indices[-1])
             trace_group = sp_group.create_group(trace_group_name)
         elif 6 == len(tokens):
-
             key = '%'.join([tokens[0], tokens[1], tokens[2]])
             if current_key != key:
                 if xyz_list is not None:
-                    xlen = len(xyz_list[1])
-                    ylen = len(xyz_list[2])
-                    zlen = len(xyz_list[3])
-                    stmt = 'harvest trace(' + str(indices[-1]) + ') region(' + str(region_dictionary[xyz_list[0]]) + ')' + ' xyz(' + str(xlen) + ',' + str(ylen) + ',' + str(zlen) + ')'
-                    print(stmt)
                     harvest_xyz(xyz_list, trace_group)
                 current_key = key
                 xyz_list = [current_key, [], [], []]
@@ -113,13 +130,11 @@ def create_spatial_positon_datasets(file, sp_group):
             xyz_list[1].append(to_float(tokens[3]))
             xyz_list[2].append(to_float(tokens[4]))
             xyz_list[3].append(to_float(tokens[5]))
-    return hash
+
+    return [xyz_list, trace_group]
 
 region_dictionary = {}
 indices = []
-
-name = arguments.arg_name
-cndbf = h5py.File(name + '.cndb', 'w')
 
 header = cndbf.create_group('Header')
 metaData = initialize_header(spacewalkFile, spacewalkMetaData)
@@ -156,10 +171,10 @@ spacewalkFile.readline()
 spacewalkFile.readline()
 
 spatial_position_group = root.create_group('spatial_position')
-xyz_dictionary = create_spatial_positon_datasets(spacewalkFile, spatial_position_group)
+result = create_spatial_positon_datasets(spacewalkFile, spatial_position_group)
 
-# last_index = 1 + indices[-1]
-# harvest_xyz(xyz_dictionary, spatial_position_group, last_index)
+# Harvest last genomic-extent of last trace
+harvest_xyz(result[0], result[1])
 
 cndbf.close()
 
