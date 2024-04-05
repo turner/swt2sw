@@ -78,35 +78,41 @@ def create_region_list(file):
 
     return result
 
-def harvest_xyz(hash, sp_group, index):
-    if hash is not None:
-        trace_group_name = str(index - 1)
-        _string = 'harvest_xyz - trace(' + trace_group_name + ')'
-        print(_string)
-        trace_group = sp_group.create_group(trace_group_name)
-        for key in hash.keys():
-            value = hash[key]
-            xyz_stack = np.column_stack((value[0], value[1], value[2]))
-            _string = str(region_dictionary[key])
-            trace_group.create_dataset(_string, data=xyz_stack)
+def harvest_xyz(xyz_list, tr_group):
+    xyz_stack = np.column_stack((xyz_list[1], xyz_list[2], xyz_list[3]))
+    _string = str(region_dictionary[xyz_list[0]])
+    stmt = 'trace group(' + tr_group.name + ') ' + 'dataset(' + _string + ')'
+    print(stmt)
+    tr_group.create_dataset(_string, data=xyz_stack)
 
 def create_spatial_positon_datasets(file, sp_group):
     hash = None
+    xyz_list = None
+    current_key = None
+    trace_group = None
     for line in file:
         tokens = line.split()
         if 'trace' == tokens[0]:
             indices.append(int(tokens[1]))
-            # _string = 'trace(' + tokens[1] + ')'
-            # print(_string)
-            harvest_xyz(hash, sp_group, indices[-1])
-            hash = {}
+            trace_group_name = str(indices[-1])
+            trace_group = sp_group.create_group(trace_group_name)
         elif 6 == len(tokens):
+
             key = '%'.join([tokens[0], tokens[1], tokens[2]])
-            if key not in hash.keys():
-                hash[key] = [[], [], []]
-            hash[key][0].append(to_float(tokens[3]))
-            hash[key][1].append(to_float(tokens[4]))
-            hash[key][2].append(to_float(tokens[5]))
+            if current_key != key:
+                if xyz_list is not None:
+                    xlen = len(xyz_list[1])
+                    ylen = len(xyz_list[2])
+                    zlen = len(xyz_list[3])
+                    stmt = 'harvest trace(' + str(indices[-1]) + ') region(' + str(region_dictionary[xyz_list[0]]) + ')' + ' xyz(' + str(xlen) + ',' + str(ylen) + ',' + str(zlen) + ')'
+                    print(stmt)
+                    harvest_xyz(xyz_list, trace_group)
+                current_key = key
+                xyz_list = [current_key, [], [], []]
+
+            xyz_list[1].append(to_float(tokens[3]))
+            xyz_list[2].append(to_float(tokens[4]))
+            xyz_list[3].append(to_float(tokens[5]))
     return hash
 
 region_dictionary = {}
@@ -152,8 +158,8 @@ spacewalkFile.readline()
 spatial_position_group = root.create_group('spatial_position')
 xyz_dictionary = create_spatial_positon_datasets(spacewalkFile, spatial_position_group)
 
-last_index = 1 + indices[-1]
-harvest_xyz(xyz_dictionary, spatial_position_group, last_index)
+# last_index = 1 + indices[-1]
+# harvest_xyz(xyz_dictionary, spatial_position_group, last_index)
 
 cndbf.close()
 
