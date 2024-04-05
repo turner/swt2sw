@@ -104,10 +104,9 @@ def create_spatial_positon_datasets(file, sp_group):
             key = '%'.join([tokens[0], tokens[1], tokens[2]])
             if key not in hash.keys():
                 hash[key] = [[], [], []]
-            else:
-                hash[key][0].append(to_float(tokens[3]))
-                hash[key][1].append(to_float(tokens[4]))
-                hash[key][2].append(to_float(tokens[5]))
+            hash[key][0].append(to_float(tokens[3]))
+            hash[key][1].append(to_float(tokens[4]))
+            hash[key][2].append(to_float(tokens[5]))
     return hash
 
 region_dictionary = {}
