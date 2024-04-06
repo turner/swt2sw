@@ -25,6 +25,7 @@ from parser import create_command_line_parser
 from utils import to_float
 from header import create_header
 from region_list import create_region_list, append_genomic_position_group_with_region_list, create_region_dictionary
+from spatial_group import create_spatial_group
 
 parser = create_command_line_parser()
 
@@ -105,11 +106,14 @@ spacewalk_file.readline()
 # Second pass.
 # Build spatial_position datasets
 
-spatial_position_group = root.create_group('spatial_position')
+# spatial_position_group = root.create_group('spatial_position')
 # result = create_spatial_positon_datasets(spacewalk_file, spatial_position_group)
 
 # Harvest last genomic-extent of last trace
 # harvest_xyz(result[0], result[1])
+
+
+create_spatial_group(root, spacewalk_file, arguments)
 
 cndbf.close()
 
