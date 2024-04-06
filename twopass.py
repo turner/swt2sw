@@ -105,15 +105,13 @@ spacewalk_file.readline()
 
 # Second pass.
 # Build spatial_position datasets
+create_spatial_group(cndbf, root, spacewalk_file, arguments)
 
 # spatial_position_group = root.create_group('spatial_position')
 # result = create_spatial_positon_datasets(spacewalk_file, spatial_position_group)
 
 # Harvest last genomic-extent of last trace
 # harvest_xyz(result[0], result[1])
-
-
-create_spatial_group(root, spacewalk_file, arguments)
 
 cndbf.close()
 
