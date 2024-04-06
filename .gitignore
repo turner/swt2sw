@@ -161,4 +161,3 @@ cython_debug/
 testFiles
 .DS_Store
 .idea
-/unused/
