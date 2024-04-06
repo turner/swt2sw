@@ -19,67 +19,28 @@ __date__   = "3 April 2024"
 ################################################################
 
 import time
-import argparse
 import numpy as np
 import h5py
-from datetime import datetime
+from parser import create_command_line_parser
+from utils import to_float
+from header import create_header
+from region_list import create_region_list, append_genomic_position_group_with_region_list, create_region_dictionary
 
-parser = argparse.ArgumentParser(description='Converting *.sw to *.cndb format')
-parser.add_argument('-f', metavar='input-file-ndb-frames',help='sw file with frames',type=argparse.FileType('rt'))
-parser.add_argument('-n', action='store', default='chromatin', dest='arg_name',  help='Name of output file')
+parser = create_command_line_parser()
 
 try:
     arguments = parser.parse_args()
-
 except IOError as msg:
     parser.error(str(msg))
 
-def to_float(value):
-    try:
-        return float(value)
-    except ValueError:  # This will catch cases where the conversion fails, e.g., if value is 'nan'
-        return float(0)
-
 b_time = time.time()
 
-name = arguments.arg_name
-cndbf = h5py.File(name + '.cndb', 'w')
+cndbf = h5py.File(arguments.cndb_filename + '.cndb', 'w')
 
-spacewalkFile = arguments.f
-spacewalkMetaData = {}
-def initialize_header(spacewalkFile, spacewalkMetaData):
-    first_line = spacewalkFile.readline().strip()
-    entries = None
-    if first_line.startswith('#'):
-        entries = first_line[2:].split()  #[2:] because have ##
+spacewalk_file = arguments.spacewalk_file
 
-    for entry in entries:
-        key, value = entry.split('=')
-        spacewalkMetaData[key] = value
-
-    hash = {
-        'version' : '1.0.0',
-        'author' : 'Douglass Turner',
-        'date' : str(datetime.now())
-    }
-
-    hash.update(spacewalkMetaData)
-
-    return hash
-def create_region_list(file):
-
-    hash = {}
-    for line in file:
-        tokens = line.split()
-        if 6 == len(tokens):
-            key = tokens[0] + '%' + tokens[1] + '%' + tokens[2]
-            if key not in hash.keys():
-                hash[key] = [tokens[0], int(tokens[1]), int(tokens[2])]
-
-    # Build sorted region list
-    result = list(map(lambda string: string.split('%'), list(hash.keys())))
-
-    return result
+region_dictionary = {}
+indices = []
 
 def harvest_xyz(xyz_list, sp_group, trace_group):
     xyz_stack = np.column_stack((xyz_list[1], xyz_list[2], xyz_list[3]))
@@ -90,7 +51,6 @@ def harvest_xyz(xyz_list, sp_group, trace_group):
             sp_group.create_group(single_xyz_group_name)
         single_xyz_group = cndbf[single_xyz_group_name]
         single_xyz_group.create_dataset(region_id, data=xyz_stack)
-
 
 def create_spatial_positon_datasets(file, sp_group):
     xyz_list = None
@@ -117,45 +77,36 @@ def create_spatial_positon_datasets(file, sp_group):
 
     return [xyz_list, trace_group]
 
-region_dictionary = {}
-indices = []
-
-header = cndbf.create_group('Header')
-metaData = initialize_header(spacewalkFile, spacewalkMetaData)
-header.attrs.update(metaData)
-
-print('Converting {:}'.format(arguments.f.name))
-
-# discard: chromosome	start	end	x	y	z
-dev_null = spacewalkFile.readline()
-
-root = cndbf.create_group(spacewalkMetaData['name'])
-
+spacewalk_meta_data = create_header(cndbf, spacewalk_file)
+root = cndbf.create_group(spacewalk_meta_data['name'])
 frame = []
 root.create_dataset('time', data=np.array(frame))
 
+print('Converting {:} to CNDB file {:}'.format(arguments.spacewalk_file.name, cndbf.filename))
+
+# discard: chromosome	start	end	x	y	z
+dev_null = spacewalk_file.readline()
+
 # First pass.
 # Create genomic position dataset consisting of regions lists
-region_list = create_region_list(spacewalkFile)
-genomicPosition = root.create_group('genomic_position')
-genomicPosition.create_dataset('regions', data=region_list)
+region_list = create_region_list(spacewalk_file)
+append_genomic_position_group_with_region_list(root, region_list)
 
 # Build region dictionary
-for region in region_list:
-    key = region[0] + '%' + region[1] + '%' + region[2]
-    region_dictionary[key] = region_list.index(region)
+region_dictionary = create_region_dictionary(region_list)
+
+# rewind file and reset file pointer
+spacewalk_file.seek(0)
+# discard: ##format=sw1 name=IMR90 genome=hg38
+spacewalk_file.readline()
+# discard: chromosome	start	end	x	y	z
+spacewalk_file.readline()
 
 # Second pass.
 # Build spatial_position datasets
-spacewalkFile.seek(0)
-
-# discard: ##format=sw1 name=IMR90 genome=hg38
-spacewalkFile.readline()
-# discard: chromosome	start	end	x	y	z
-spacewalkFile.readline()
 
 spatial_position_group = root.create_group('spatial_position')
-result = create_spatial_positon_datasets(spacewalkFile, spatial_position_group)
+# result = create_spatial_positon_datasets(spacewalk_file, spatial_position_group)
 
 # Harvest last genomic-extent of last trace
 # harvest_xyz(result[0], result[1])
