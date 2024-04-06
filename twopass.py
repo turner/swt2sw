@@ -81,38 +81,22 @@ def create_region_list(file):
 
     return result
 
-def harvest_xyz(xyz_list, tr_group):
+def harvest_xyz(xyz_list, sp_group, trace_group):
     xyz_stack = np.column_stack((xyz_list[1], xyz_list[2], xyz_list[3]))
     region_id = str(region_dictionary[xyz_list[0]])
+    if 1 == xyz_stack.shape[0]:
+        single_xyz_group_name = sp_group.name + '/single_xyz'
+        if single_xyz_group_name not in cndbf:
+            sp_group.create_group(single_xyz_group_name)
+        single_xyz_group = cndbf[single_xyz_group_name]
+        single_xyz_group.create_dataset(region_id, data=xyz_stack)
 
-    if len(xyz_list[1]) > 1:
-        candidate_name = tr_group.name + '/' + region_id
-        stmt = 'harvest xyz for dataset(' + candidate_name + ')'
-        print(stmt)
-        if candidate_name in cndbf:
-            dataset = cndbf[candidate_name]
-            dataset_size = dataset.shape[0]
-            xyz_size = xyz_stack.shape[0]
-            new_size = dataset_size + xyz_size
-            dataset.resize(new_size, axis=0)
-            dataset[-xyz_stack.shape[0]:] = xyz_stack
-        else:
-            tr_group.create_dataset(region_id, data=xyz_stack, maxshape=(None,3))
-    else:
-        candidate_name = tr_group.name + '/centroid'
-        if candidate_name in cndbf:
-            dataset = cndbf[candidate_name]
-            dataset_size = dataset.shape[0]
-            xyz_size = xyz_stack.shape[0]
-            new_size = dataset_size + xyz_size
-            dataset.resize(new_size, axis=0)
-            dataset[-xyz_stack.shape[0]:] = xyz_stack
-        else:
-            tr_group.create_dataset('centroid', data=xyz_stack, maxshape=(None, 3))
+
 def create_spatial_positon_datasets(file, sp_group):
     xyz_list = None
     current_key = None
     trace_group = None
+    single_xyz_group = None
     for line in file:
         tokens = line.split()
         if 'trace' == tokens[0]:
@@ -123,7 +107,7 @@ def create_spatial_positon_datasets(file, sp_group):
             key = '%'.join([tokens[0], tokens[1], tokens[2]])
             if current_key != key:
                 if xyz_list is not None:
-                    harvest_xyz(xyz_list, trace_group)
+                    harvest_xyz(xyz_list, sp_group, trace_group)
                 current_key = key
                 xyz_list = [current_key, [], [], []]
 
@@ -174,7 +158,7 @@ spatial_position_group = root.create_group('spatial_position')
 result = create_spatial_positon_datasets(spacewalkFile, spatial_position_group)
 
 # Harvest last genomic-extent of last trace
-harvest_xyz(result[0], result[1])
+# harvest_xyz(result[0], result[1])
 
 cndbf.close()
 
