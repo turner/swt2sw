@@ -60,18 +60,12 @@ def create_multi_point_group(spatial_position_group, regions, spacewalk_file):
 def create_spatial_group(root, regions, spacewalk_file, args):
     spatial_position_group = root.create_group('spatial_position')
     if args.single_point:
-        result = create_single_point_group(spatial_position_group, spacewalk_file)
-        xyz = result[0]
-        indices = result[1]
-        single_point_group = result[2]
-        # harvest last dataset
+        xyz, indices, single_point_group = create_single_point_group(spatial_position_group, spacewalk_file)
+        # harvest final xyz list
         single_point_group_harvest_xyz(single_point_group, xyz, indices[-1])
     elif args.multi_point:
-        result = create_multi_point_group(spatial_position_group, regions, spacewalk_file)
-        multi_point_group = result[0]
-        hash = result[1]
-        indices = result[2]
-        # harvest last dataset
-        multi_point_group_harvest_xyz(multi_point_group, regions, hash, indices[-1])
+        multi_point_group, dictionary, indices = create_multi_point_group(spatial_position_group, regions, spacewalk_file)
+        # harvest final hash entries
+        multi_point_group_harvest_xyz(multi_point_group, regions, dictionary, indices[-1])
 
     return None
