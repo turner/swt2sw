@@ -105,7 +105,7 @@ spacewalk_file.readline()
 
 # Second pass.
 # Build spatial_position datasets
-create_spatial_group(cndbf, root, spacewalk_file, arguments)
+create_spatial_group(root, region_dictionary, spacewalk_file, arguments)
 
 # spatial_position_group = root.create_group('spatial_position')
 # result = create_spatial_positon_datasets(spacewalk_file, spatial_position_group)
