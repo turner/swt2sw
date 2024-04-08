@@ -8,9 +8,10 @@ def create_region_list(file):
             if key not in hash.keys():
                 hash[key] = [tokens[0], int(tokens[1]), int(tokens[2])]
 
-    # Build sorted region list
-    result = list(map(lambda string: string.split('%'), list(hash.keys())))
-
+    # Create sorted region list
+    key_list = list(hash.keys())
+    key_list.sort(key=lambda string: int(string.split('%')[1]))
+    result = list(map(lambda string: string.split('%'), key_list))
     return result
 
 def append_genomic_position_group_with_region_list(root, region_list):
