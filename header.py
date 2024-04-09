@@ -1,7 +1,7 @@
 from datetime import datetime
 def create_header(cndbf, spacewalk_file):
     spacewalk_meta_data = {}
-    header = cndbf.create_group('Header')
+    header_group = cndbf.create_group('Header')
     first_line = spacewalk_file.readline().strip()
     entries = None
     if first_line.startswith('#'):
@@ -18,6 +18,6 @@ def create_header(cndbf, spacewalk_file):
     }
 
     hash.update(spacewalk_meta_data)
-    header.attrs.update(hash)
+    header_group.attrs.update(hash)
 
-    return spacewalk_meta_data
+    return header_group, spacewalk_meta_data

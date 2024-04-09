@@ -57,13 +57,15 @@ def create_multi_point_group(spatial_position_group, regions, spacewalk_file):
             hash[key][2].append(to_float(tokens[5]))
     return [multi_point_group, hash, indices]
 
-def create_spatial_group(root, regions, spacewalk_file, args):
+def create_spatial_group(root, regions, spacewalk_file, args, header_group):
     spatial_position_group = root.create_group('spatial_position')
     if args.single_point:
+        header_group.attrs['point_type'] = 'single_point'
         xyz, indices, single_point_group = create_single_point_group(spatial_position_group, spacewalk_file)
         # harvest final xyz list
         single_point_group_harvest_xyz(single_point_group, xyz, indices[-1])
     elif args.multi_point:
+        header_group.attrs['point_type'] = 'multi_point'
         multi_point_group, dictionary, indices = create_multi_point_group(spatial_position_group, regions, spacewalk_file)
         # harvest final hash entries
         multi_point_group_harvest_xyz(multi_point_group, regions, dictionary, indices[-1])
