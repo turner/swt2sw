@@ -1,8 +1,8 @@
 import argparse
 def create_command_line_parser():
-    parser = argparse.ArgumentParser(description='Convert *.sw to *.cndb format')
+    parser = argparse.ArgumentParser(description='Convert *.sw to *.swb format')
     parser.add_argument('-f', dest='spacewalk_file', type=argparse.FileType('rt'), help='Input spacewalk file')
-    parser.add_argument('-n', dest='cndb_filename', action='store', help='Output CNDB file')
+    parser.add_argument('-n', dest='swb_filename', action='store', help='Output swb file')
 
     group = parser.add_mutually_exclusive_group(required=True)
 

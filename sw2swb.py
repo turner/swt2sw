@@ -3,7 +3,7 @@
 
 __description__ = \
     """
-    Converting *.sw to *.cndb format
+    Converting *.sw to *.swb format
     """
 
 __author__ = "Douglass Turner"
@@ -11,10 +11,10 @@ __date__   = "3 April 2024"
 
 ################################################################
 # 
-# Convert Spacewalk files (.sw) to Compacted Nucleome Data Bank format (.cndb)
+# Convert Spacewalk files from text (.sw) to HDF5 (.swb)
 #
 # usage:
-#  ./spacewalk2cndb.py -f spacewalk_file.sw -n cndb_file_name
+#  ./sw2swb.py -f spacewalk_filename.sw -n swb_filename
 #
 ################################################################
 
@@ -35,16 +35,16 @@ except IOError as msg:
 
 b_time = time.time()
 
-cndbf = h5py.File(arguments.cndb_filename + '.cndb', 'w')
+swbf = h5py.File(arguments.swb_filename + '.swb', 'w')
 
 spacewalk_file = arguments.spacewalk_file
 
-header_group, spacewalk_meta_data = create_header(cndbf, spacewalk_file)
-root = cndbf.create_group(spacewalk_meta_data['name'])
+header_group, spacewalk_meta_data = create_header(swbf, spacewalk_file)
+root = swbf.create_group(spacewalk_meta_data['name'])
 frame = []
 root.create_dataset('time', data=np.array(frame))
 
-print('Converting {:} to CNDB file {:}'.format(arguments.spacewalk_file.name, cndbf.filename))
+print('Converting {:} to swb file {:}'.format(arguments.spacewalk_file.name, swbf.filename))
 
 # discard: chromosome	start	end	x	y	z
 dev_null = spacewalk_file.readline()
@@ -68,7 +68,7 @@ spacewalk_file.readline()
 # Build spatial_position datasets
 create_spatial_group(root, region_dictionary, spacewalk_file, arguments, header_group)
 
-cndbf.close()
+swbf.close()
 
 e_time = time.time()
 elapsed = e_time - b_time
