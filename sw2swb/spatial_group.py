@@ -1,5 +1,5 @@
 import numpy as np
-from .utils import to_float
+from sw2swb.utils import to_float
 
 def single_point_group_harvest_xyz(group, xyz, index):
     xyz_stack = np.column_stack((xyz[1], xyz[2], xyz[3]))

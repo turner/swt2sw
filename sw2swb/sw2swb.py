@@ -21,10 +21,10 @@ __date__   = "3 April 2024"
 import time
 import numpy as np
 import h5py
-from .parser import create_command_line_parser
-from .header import create_header
-from .region_list import create_region_list, append_genomic_position_group_with_region_list, create_region_dictionary
-from .spatial_group import create_spatial_group
+from sw2swb.parser import create_command_line_parser
+from sw2swb.header import create_header
+from sw2swb.region_list import create_region_list, append_genomic_position_group_with_region_list, create_region_dictionary
+from sw2swb.spatial_group import create_spatial_group
 
 def main():
     parser = create_command_line_parser()
@@ -69,7 +69,19 @@ def main():
     # Build spatial_position datasets
     create_spatial_group(root, region_dictionary, spacewalk_file, arguments, header_group)
 
+    swb_filename = swbf.filename
+
     swbf.close()
+
+
+
+    try:
+        import hdf5_indexer
+        print('indexing {:}...'.format(swb_filename))
+        hdf5_indexer.make_index(swb_filename)
+        print('done')
+    except ImportError:
+        print('{:} was not indexed. Could not import module hdf5_indexer'.format(swbf.filename))
 
     e_time = time.time()
     elapsed = e_time - b_time

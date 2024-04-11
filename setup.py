@@ -1,13 +1,14 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='my_package',
+    name='sw2swb',
     version='0.1',
     packages=find_packages(),
-    description='A description of your project',
+    description='Tool to convert Spacewalk text files (.sw) to binary files (.swb)',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     install_requires=[
+        'hdf5-indexer',
         'numpy',
         'h5py'
     ],
