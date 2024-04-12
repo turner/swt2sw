@@ -42,13 +42,11 @@ def main():
 
     header_group, spacewalk_meta_data = create_header(swbf, spacewalk_file)
     root = swbf.create_group(spacewalk_meta_data['name'])
-    frame = []
-    root.create_dataset('time', data=np.array(frame))
 
     print('Converting {:} to swb file {:}'.format(arguments.spacewalk_file.name, swbf.filename))
 
     # discard: chromosome	start	end	x	y	z
-    dev_null = spacewalk_file.readline()
+    spacewalk_file.readline()
 
     # First pass.
     # Create genomic position dataset consisting of regions lists
@@ -58,7 +56,7 @@ def main():
     # Build region dictionary
     region_dictionary = create_region_dictionary(region_list)
 
-    # rewind file and reset file pointer
+    # rewind file and reset file pointer to prepare for second pass over file
     spacewalk_file.seek(0)
     # discard: ##format=sw1 name=IMR90 genome=hg38
     spacewalk_file.readline()
@@ -72,8 +70,6 @@ def main():
     swb_filename = swbf.filename
 
     swbf.close()
-
-
 
     try:
         import hdf5_indexer
