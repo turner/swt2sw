@@ -20,10 +20,10 @@ __date__   = "3 April 2024"
 
 import time
 import h5py
-from sw2swb.parser import create_command_line_parser
-from sw2swb.header import create_header
-from sw2swb.region_list import create_region_list, append_genomic_position_group_with_region_list, create_region_dictionary
-from sw2swb.spatial_group import create_spatial_group
+from .parser import create_command_line_parser
+from .header import create_header
+from .region_list import create_region_list, append_genomic_position_group_with_region_list, create_region_dictionary
+from .spatial_group import create_spatial_group
 
 def main():
     parser = create_command_line_parser()
