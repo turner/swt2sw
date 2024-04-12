@@ -19,7 +19,6 @@ __date__   = "3 April 2024"
 ################################################################
 
 import time
-import numpy as np
 import h5py
 from sw2swb.parser import create_command_line_parser
 from sw2swb.header import create_header
