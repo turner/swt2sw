@@ -13,8 +13,6 @@ __date__   = "3 April 2024"
 # 
 # Convert Spacewalk files from text (.sw) to HDF5 (.swb)
 #
-# usage:
-#  ./sw2swb.py -f spacewalk_filename.sw -n swb_filename
 #
 ################################################################
 
