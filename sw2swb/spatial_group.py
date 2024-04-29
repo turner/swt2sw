@@ -3,16 +3,16 @@ from .utils import to_float
 
 def single_point_group_harvest_xyz(group, xyz, index):
     xyz_stack = np.column_stack((xyz[1], xyz[2], xyz[3]))
-    dataset_name = str(index)
+    dataset_name = 't_' + str(index)
     print('Create dataset {:}'.format(dataset_name))
     group.create_dataset(dataset_name, data=xyz_stack)
 
 def multi_point_group_harvest_xyz(group, regions, hash, index):
-    trace_group = group.create_group(str(index))
+    trace_group = group.create_group('t_' + str(index))
     for key in hash.keys():
         value = hash[key]
         xyz_stack = np.column_stack((value[0], value[1], value[2]))
-        _string = str(regions[key])
+        _string = 'r_' + str(regions[key])
         trace_group.create_dataset(_string, data=xyz_stack)
 
 def create_single_point_group(spatial_position_group, spacewalk_file):
