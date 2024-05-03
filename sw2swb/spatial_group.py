@@ -35,6 +35,24 @@ def multi_point_dataset_harvest(trace_dataset, regions, hash):
         trace_dataset.resize(trace_dataset.shape[0] + new_rows, axis=0)
         trace_dataset[-new_rows:] = region_xyz_stack
 
+def multi_point_xyz_stack_harvest(stacks, regions, hash):
+    print('multi_point_xyz_stack_harvest')
+
+    for key in hash.keys():
+
+        xyz = hash[key]
+        xyz_stack = np.column_stack((xyz[0], xyz[1], xyz[2]))
+
+        # how many rows
+        row_count = xyz_stack.shape[0]
+
+        # create single column
+        region_index_column = np.full((row_count, 1), regions[key])
+
+        # prepend region index to xyz-stack
+        region_xyz_stack = np.hstack((region_index_column, xyz_stack))
+        stacks.append(region_xyz_stack)
+
 def create_single_point_group(spatial_position_group, spacewalk_file):
     print('Create Ball & Stick Spatial Group')
     indices = []
@@ -66,8 +84,10 @@ def create_multi_point_group(spatial_position_group, regions, spacewalk_file):
             indices.append(int(tokens[1]))
 
             if hash is not None:
-                dataset = spatial_position_group.create_dataset('t_' + str(indices[-2]), shape=(0, 4), maxshape=(None, 4), dtype=np.float64)
-                multi_point_dataset_harvest(dataset, regions, hash)
+                xyz_stacks = []
+                multi_point_xyz_stack_harvest(xyz_stacks, regions, hash)
+                combined_xyz_stack = np.vstack(xyz_stacks)
+                spatial_position_group.create_dataset('t_' + str(indices[-2]), data=combined_xyz_stack)
             hash = {}
 
         elif 6 == len(tokens):
@@ -91,7 +111,9 @@ def create_spatial_group(root, regions, spacewalk_file, args, header_group):
         dictionary, indices = create_multi_point_group(spatial_position_group, regions, spacewalk_file)
 
         # harvest final hash entries
-        ds = spatial_position_group.create_dataset('t_' + str(indices[-1]), shape=(0, 4), maxshape=(None, 4), dtype=np.float64)
-        multi_point_dataset_harvest(ds, regions, dictionary)
+        xyz_stacks = []
+        multi_point_xyz_stack_harvest(xyz_stacks, regions, dictionary)
+        combined_xyz_stack = np.vstack(xyz_stacks)
+        spatial_position_group.create_dataset('t_' + str(indices[-1]), data=combined_xyz_stack)
 
     return None
