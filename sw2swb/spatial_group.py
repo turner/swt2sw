@@ -1,5 +1,10 @@
 import numpy as np
-from .utils import to_float
+
+def to_float(value):
+    try:
+        return float(value)
+    except ValueError:  # This will catch cases where the conversion fails, e.g., if value is 'nan'
+        return float(0)
 
 def single_point_group_harvest_xyz(group, xyz, index):
     xyz_stack = np.column_stack((xyz[1], xyz[2], xyz[3]))
@@ -7,13 +12,28 @@ def single_point_group_harvest_xyz(group, xyz, index):
     print('Create dataset {:}'.format(dataset_name))
     group.create_dataset(dataset_name, data=xyz_stack)
 
-def multi_point_group_harvest_xyz(group, regions, hash, index):
-    trace_group = group.create_group('t_' + str(index))
+def multi_point_dataset_harvest(trace_dataset, regions, hash):
+    print('multi_point_dataset_harvest')
+
     for key in hash.keys():
-        value = hash[key]
-        xyz_stack = np.column_stack((value[0], value[1], value[2]))
-        _string = 'r_' + str(regions[key])
-        trace_group.create_dataset(_string, data=xyz_stack)
+
+        xyz = hash[key]
+
+        xyz_stack = np.column_stack((xyz[0], xyz[1], xyz[2]))
+
+        # how many rows
+        row_count = xyz_stack.shape[0]
+
+        # create single column
+        region_index_column = np.full((row_count, 1), regions[key])
+
+        # prepend region index to xyz-stack
+        region_xyz_stack = np.hstack((region_index_column, xyz_stack))
+
+        # Resize the dataset to accommodate the new data
+        new_rows = region_xyz_stack.shape[0]
+        trace_dataset.resize(trace_dataset.shape[0] + new_rows, axis=0)
+        trace_dataset[-new_rows:] = region_xyz_stack
 
 def create_single_point_group(spatial_position_group, spacewalk_file):
     print('Create Ball & Stick Spatial Group')
@@ -39,13 +59,17 @@ def create_multi_point_group(spatial_position_group, regions, spacewalk_file):
     print('Create Pointcloud Spatial Group')
     indices = []
     hash = None
+    dataset = None
     for line in spacewalk_file:
         tokens = line.split()
         if 'trace' == tokens[0]:
             indices.append(int(tokens[1]))
+
             if hash is not None:
-                multi_point_group_harvest_xyz(spatial_position_group, regions, hash, indices[-2])
+                dataset = spatial_position_group.create_dataset('t_' + str(indices[-2]), shape=(0, 4), maxshape=(None, 4), dtype=np.float64)
+                multi_point_dataset_harvest(dataset, regions, hash)
             hash = {}
+
         elif 6 == len(tokens):
             key = '%'.join([tokens[0], tokens[1], tokens[2]])
             if key not in hash.keys():
@@ -65,7 +89,9 @@ def create_spatial_group(root, regions, spacewalk_file, args, header_group):
     elif args.multi_point:
         header_group.attrs['point_type'] = 'multi_point'
         dictionary, indices = create_multi_point_group(spatial_position_group, regions, spacewalk_file)
+
         # harvest final hash entries
-        multi_point_group_harvest_xyz(spatial_position_group, regions, dictionary, indices[-1])
+        ds = spatial_position_group.create_dataset('t_' + str(indices[-1]), shape=(0, 4), maxshape=(None, 4), dtype=np.float64)
+        multi_point_dataset_harvest(ds, regions, dictionary)
 
     return None
