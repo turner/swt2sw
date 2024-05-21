@@ -1,6 +1,6 @@
 import argparse
 def create_command_line_parser():
-    parser = argparse.ArgumentParser(description='Convert *.sw to *.swb format')
+    parser = argparse.ArgumentParser(description='Convert text-based *.swt file to binary HDF5 format *.sw file')
     parser.add_argument('-f', dest='spacewalk_file', type=argparse.FileType('rt'), help='Input spacewalk file')
     parser.add_argument('-n', dest='swb_filename', action='store', help='Output swb file')
 
