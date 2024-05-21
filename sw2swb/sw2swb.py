@@ -3,7 +3,7 @@
 
 __description__ = \
     """
-    Converting *.sw to *.swb format
+    Convert Spacewalk files from text (.swt) to HDF5 (.sw)
     """
 
 __author__ = "Douglass Turner"
@@ -11,7 +11,7 @@ __date__   = "3 April 2024"
 
 ################################################################
 # 
-# Convert Spacewalk files from text (.sw) to HDF5 (.swb)
+# Convert Spacewalk files from text (.swt) to HDF5 (.sw)
 #
 #
 ################################################################
@@ -33,7 +33,7 @@ def main():
 
     b_time = time.time()
 
-    swbf = h5py.File(arguments.swb_filename + '.swb', 'w')
+    swbf = h5py.File(arguments.swb_filename + '.sw', 'w')
 
     spacewalk_file = arguments.spacewalk_file
 
