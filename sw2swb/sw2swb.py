@@ -28,6 +28,11 @@ def main():
 
     try:
         arguments = parser.parse_args()
+
+        if arguments.multi_point:
+            if arguments.live_contact_map:
+                parser.error("-live-contact-map can only be used with -single-point")
+
     except IOError as msg:
         parser.error(str(msg))
 
