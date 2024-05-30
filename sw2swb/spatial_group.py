@@ -11,7 +11,9 @@ def single_point_group_harvest_xyz(group, xyz, index, args, lcmv):
     xyz_stack = np.column_stack((xyz[1], xyz[2], xyz[3]))
 
     if args.live_contact_map:
-        lcmv.append(xyz_stack)
+        lcmv['x'].extend(xyz[1])
+        lcmv['y'].extend(xyz[2])
+        lcmv['z'].extend(xyz[3])
 
     dataset_name = 't_' + str(index)
     print('Create dataset {:}'.format(dataset_name))
@@ -105,7 +107,7 @@ def create_multi_point_group(spatial_position_group, regions, spacewalk_file):
     return [hash, indices]
 
 def create_spatial_group(root, regions, spacewalk_file, args, header_group):
-    live_contact_map_vertices = []
+    live_contact_map_vertices = {'x':[],'y':[],'z':[]}
     spatial_position_group = root.create_group('spatial_position')
     if args.single_point:
         header_group.attrs['point_type'] = 'single_point'
@@ -121,5 +123,9 @@ def create_spatial_group(root, regions, spacewalk_file, args, header_group):
         multi_point_xyz_stack_harvest(xyz_stacks, regions, dictionary)
         combined_xyz_stack = np.vstack(xyz_stacks)
         spatial_position_group.create_dataset('t_' + str(indices[-1]), data=combined_xyz_stack)
+
+    if args.live_contact_map:
+        root.create_dataset('live_contact_map_vertices', data=np.column_stack((live_contact_map_vertices['x'], live_contact_map_vertices['y'], live_contact_map_vertices['z'])))
+
 
     return None
