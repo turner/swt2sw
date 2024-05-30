@@ -6,8 +6,15 @@ def to_float(value):
     except ValueError:  # This will catch cases where the conversion fails, e.g., if value is 'nan'
         return float(0)
 
-def single_point_group_harvest_xyz(group, xyz, index):
+def single_point_group_harvest_xyz(group, xyz, index, args, lcmv):
+
     xyz_stack = np.column_stack((xyz[1], xyz[2], xyz[3]))
+
+    if args.live_contact_map:
+        lcmv['x'].extend(xyz[1])
+        lcmv['y'].extend(xyz[2])
+        lcmv['z'].extend(xyz[3])
+
     dataset_name = 't_' + str(index)
     print('Create dataset {:}'.format(dataset_name))
     group.create_dataset(dataset_name, data=xyz_stack)
@@ -53,7 +60,7 @@ def multi_point_xyz_stack_harvest(stacks, regions, hash):
         region_xyz_stack = np.hstack((region_index_column, xyz_stack))
         stacks.append(region_xyz_stack)
 
-def create_single_point_group(spatial_position_group, spacewalk_file):
+def create_single_point_group(spatial_position_group, spacewalk_file, args, lcmv):
     print('Create Ball & Stick Spatial Group')
     indices = []
     xyz_list = None
@@ -62,7 +69,7 @@ def create_single_point_group(spatial_position_group, spacewalk_file):
         if 'trace' == tokens[0]:
             indices.append(int(tokens[1]))
             if xyz_list is not None:
-                single_point_group_harvest_xyz(spatial_position_group, xyz_list, indices[-2])
+                single_point_group_harvest_xyz(spatial_position_group, xyz_list, indices[-2], args, lcmv)
                 xyz_list = None
         elif 6 == len(tokens):
             if xyz_list is None:
@@ -100,12 +107,13 @@ def create_multi_point_group(spatial_position_group, regions, spacewalk_file):
     return [hash, indices]
 
 def create_spatial_group(root, regions, spacewalk_file, args, header_group):
+    live_contact_map_vertices = {'x':[],'y':[],'z':[]}
     spatial_position_group = root.create_group('spatial_position')
     if args.single_point:
         header_group.attrs['point_type'] = 'single_point'
-        xyz, indices = create_single_point_group(spatial_position_group, spacewalk_file)
+        xyz, indices = create_single_point_group(spatial_position_group, spacewalk_file, args, live_contact_map_vertices)
         # harvest final xyz list
-        single_point_group_harvest_xyz(spatial_position_group, xyz, indices[-1])
+        single_point_group_harvest_xyz(spatial_position_group, xyz, indices[-1], args, live_contact_map_vertices)
     elif args.multi_point:
         header_group.attrs['point_type'] = 'multi_point'
         dictionary, indices = create_multi_point_group(spatial_position_group, regions, spacewalk_file)
@@ -115,5 +123,9 @@ def create_spatial_group(root, regions, spacewalk_file, args, header_group):
         multi_point_xyz_stack_harvest(xyz_stacks, regions, dictionary)
         combined_xyz_stack = np.vstack(xyz_stacks)
         spatial_position_group.create_dataset('t_' + str(indices[-1]), data=combined_xyz_stack)
+
+    if args.live_contact_map:
+        root.create_dataset('live_contact_map_vertices', data=np.column_stack((live_contact_map_vertices['x'], live_contact_map_vertices['y'], live_contact_map_vertices['z'])))
+
 
     return None
