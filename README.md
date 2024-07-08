@@ -7,6 +7,10 @@ A tool to convert Spacewalk text-based files (.swt) to Spacewalk binary files (.
 **Tested with Python 3.12.2**
 
 ```
+pip install git+https://github.com/jrobinso/hdf5-indexer.git
+```
+
+```
 pip install git+https://github.com/turner/sw2swb.git
 ```
 
@@ -30,6 +34,7 @@ sw2swb -f ball-and-stick.swt -n ball-and-stick -single-point
 
 ```commandline
 wget "https://www.dropbox.com/scl/fi/6e0mgljxd9pqo7coi5dy7/ball-and-stick.sw?rlkey=flan64vir2791z78knpotbpcb&dl=0" -O ball-and-stick.sw
+pip install git+https://github.com/jrobinso/hdf5-indexer.git
 pip install git+https://github.com/turner/sw2swb.git
 sw2swb -f ball-and-stick.swt -n ball-and-stick -single-point
 ```
