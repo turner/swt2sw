@@ -33,7 +33,7 @@ sw2swb -f ball-and-stick.swt -n ball-and-stick -single-point
 ## Example
 
 ```commandline
-wget "https://www.dropbox.com/scl/fi/6e0mgljxd9pqo7coi5dy7/ball-and-stick.sw?rlkey=flan64vir2791z78knpotbpcb&dl=0" -O ball-and-stick.sw
+wget "https://www.dropbox.com/scl/fi/6e0mgljxd9pqo7coi5dy7/ball-and-stick.swt?rlkey=flan64vir2791z78knpotbpcb&st=tfbrqgc3&dl=0" -O ball-and-stick.swt
 pip install git+https://github.com/jrobinso/hdf5-indexer.git
 pip install git+https://github.com/turner/sw2swb.git
 sw2swb -f ball-and-stick.swt -n ball-and-stick -single-point
