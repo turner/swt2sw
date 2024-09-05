@@ -27,7 +27,7 @@ Convert a text baserd pointcloude file to a binary format. The use of -multi-poi
 xyz location for a single genomic extent
 
 ```commandline
-sw2swb -f ball-and-stick.swt -n ball-and-stick -single-point
+sw2swb -f pointcloud.swt -n pointcloud -multi-point
 ```
 
 ## Example
