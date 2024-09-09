@@ -40,12 +40,12 @@ def main():
 
     swbf = h5py.File(arguments.swb_filename + '.sw', 'w')
 
-    spacewalk_file = arguments.spacewalk_file
+    spacewalk_file = arguments.swt_file
 
     header_group, spacewalk_meta_data = create_header(swbf, spacewalk_file)
     root = swbf.create_group(spacewalk_meta_data['name'])
 
-    print('Converting {:} to swb file {:}'.format(arguments.spacewalk_file.name, swbf.filename))
+    print('Converting {:} to swb file {:}'.format(arguments.swt_file.name, swbf.filename))
 
     # discard: chromosome	start	end	x	y	z
     spacewalk_file.readline()
