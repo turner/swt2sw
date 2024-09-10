@@ -16,14 +16,14 @@ pip install git+https://github.com/turner/sw2swb.git
 
 ## Command Line Usage
 
-Convert a text baserd ball & stick file to a binary format. The use of -single-point indicates the data has a single 
+Convert a text based ball & stick file to a binary format. The use of -single-point indicates the data has a single 
 xyz location for a single genomic extent
 
 ```commandline
 sw2swb -f ball-and-stick.swt -n ball-and-stick -single-point
 ```
 
-Convert a text baserd pointcloude file to a binary format. The use of -multi-point indicates the data has multiple 
+Convert a text based pointcloud file to a binary format. The use of -multi-point indicates the data has multiple 
 xyz location for a single genomic extent
 
 ```commandline
@@ -42,6 +42,6 @@ sw2swb -f ball-and-stick.swt -n ball-and-stick -single-point
 
 ### Google Colab Notebook - Convert CSV data to Spacewalk file
 ```Google Colab Notebook
-https://colab.research.google.com/drive/1SNN4_b3_x1Xhqr7gkQbSyLBRflWLUdRO
+[Google Colab Notebook](https://colab.research.google.com/drive/1SNN4_b3_x1Xhqr7gkQbSyLBRflWLUdRO#scrollTo=6gVm7bkpYeF7)
 ```
 
