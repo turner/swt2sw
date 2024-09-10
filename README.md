@@ -41,7 +41,5 @@ sw2swb -f ball-and-stick.swt -n ball-and-stick -single-point
 ```
 
 ### Google Colab Notebook - Convert CSV data to Spacewalk file
-```Google Colab Notebook
-[Google Colab Notebook](https://colab.research.google.com/drive/1SNN4_b3_x1Xhqr7gkQbSyLBRflWLUdRO#scrollTo=6gVm7bkpYeF7)
-```
+[Convert CSV data to Spacewalk file](https://colab.research.google.com/drive/1SNN4_b3_x1Xhqr7gkQbSyLBRflWLUdRO#scrollTo=6gVm7bkpYeF7)
 
