@@ -38,7 +38,7 @@ def main():
 
     b_time = time.time()
 
-    swbf = h5py.File(arguments.swb_filename + '.sw', 'w')
+    swbf = h5py.File(arguments.sw_filename + '.sw', 'w')
 
     spacewalk_file = arguments.swt_file
 
@@ -69,14 +69,14 @@ def main():
     # Build spatial_position datasets
     create_spatial_group(root, region_dictionary, spacewalk_file, arguments, header_group)
 
-    swb_filename = swbf.filename
+    sw_filename = swbf.filename
 
     swbf.close()
 
     try:
         import hdf5_indexer
-        print('indexing {:}...'.format(swb_filename))
-        hdf5_indexer.make_index(swb_filename)
+        print('indexing {:}...'.format(sw_filename))
+        hdf5_indexer.make_index(sw_filename)
         print('done')
     except ImportError:
         print('{:} was not indexed. Could not import module hdf5_indexer'.format(swbf.filename))
