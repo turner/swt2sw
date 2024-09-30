@@ -1,4 +1,4 @@
-# sw2swb
+# swt2sw
 
 A tool to convert Spacewalk text-based files (.swt) to Spacewalk binary files (.sw). This format is based on the Hierarchical Data Format (HDF5).
 
