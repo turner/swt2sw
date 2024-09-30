@@ -1,10 +1,10 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='sw2swb',
-    version='0.1',
+    name='swt2sw',
+    version='1.0',
     packages=find_packages(),
-    description='Tool to convert Spacewalk text files (.sw) to binary files (.swb)',
+    description='Tool to convert Spacewalk text files (.swt) to binary files (.sw)',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     install_requires=[
@@ -14,7 +14,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'sw2swb=sw2swb.sw2swb:main',
+            'swt2sw=swt2sw.swt2sw:main',
         ],
     },
 )
