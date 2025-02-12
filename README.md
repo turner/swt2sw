@@ -19,21 +19,31 @@ pip install git+https://github.com/turner/swt2sw.git
 Convert a text based ball & stick file to a binary format. The use of -single-point indicates the data has a single 
 xyz location for a single genomic extent
 
-```commandline
+```
 swt2sw -f ball-and-stick.swt -n ball-and-stick -single-point
 ```
 
 Convert a text based pointcloud file to a binary format. The use of -multi-point indicates the data has multiple 
 xyz location for a single genomic extent
 
-```commandline
+```
 swt2sw -f pointcloud.swt -n pointcloud -multi-point
 ```
+## Documentation
+
+Detailed file format specifications can be found here [Spacewalk Wiki](https://github.com/igvteam/spacewalk/wiki). This documentation includes:
+
+- **Spacewalk Binary File Format (.sw):**  
+  The new, efficient binary format based on HDF5. It offers enhanced performance, improved scalability, and robust support for complex, hierarchical datasets.
+
+- **Legacy Spacewalk Text Format (.swt):**  
+  The original text-based format that is now deprecated. While some legacy files are still in use, it is highly recommended to migrate to the binary format to leverage modern performance improvements and future enhancements.
+
+For comprehensive technical details and migration guidelines, please refer to the [Spacewalk Wiki](https://github.com/igvteam/spacewalk/wiki).
 
 ## Examples
 
-### Command Line
-```commandline
+```
 wget "https://www.dropbox.com/scl/fi/6e0mgljxd9pqo7coi5dy7/ball-and-stick.swt?rlkey=flan64vir2791z78knpotbpcb&st=tfbrqgc3&dl=0" -O ball-and-stick.swt
 pip install git+https://github.com/jrobinso/hdf5-indexer.git
 pip install git+https://github.com/turner/sw2swb.git
