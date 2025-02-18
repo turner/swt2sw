@@ -51,5 +51,8 @@ swt2sw -f ball-and-stick.swt -n ball-and-stick -single-point
 ```
 
 ### Google Colab Notebook - Convert CSV data to Spacewalk file
-[Convert CSV data to Spacewalk file](https://colab.research.google.com/drive/1SNN4_b3_x1Xhqr7gkQbSyLBRflWLUdRO#scrollTo=6gVm7bkpYeF7)
+Included in this project is a Google Colab Notebook that is a detailed example of how to convert a simple
+CSV file to Spacewalk Binary File format. Click this button to run the notebook 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/turner/swt2sw/blob/main/docs/CSVtoSpacewalk.ipynb)
+
 
