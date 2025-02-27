@@ -2,6 +2,16 @@
 
 A tool to convert Spacewalk text-based files (.swt) to Spacewalk binary files (.sw). This format is based on the Hierarchical Data Format (HDF5).
 
+## Quick Demo
+
+Try these interactive demos to see how Spacewalk visualizes different data types:
+
+- **Ball & Stick Visualization**: [Launch Demo](https://tinyurl.com/25audeaa)  
+  Shows genomic regions connected by 3D structures, ideal for chromosome conformation data.
+
+- **Point Cloud Visualization**: [Launch Demo](https://tinyurl.com/23lwr5u6)  
+  Displays multiple spatial points per genomic region, perfect for super-resolution microscopy data.
+
 ## Installation
 
 **Tested with Python 3.12.2**
