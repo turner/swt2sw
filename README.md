@@ -29,9 +29,10 @@ xyz location for a single genomic extent
 ```
 swt2sw -f pointcloud.swt -n pointcloud -multi-point
 ```
+
 ## Documentation
 
-Detailed file format specifications can be found here [Spacewalk Wiki](https://github.com/igvteam/spacewalk/wiki). This documentation includes:
+Detailed file format specifications can be found in the [Spacewalk Documentation](https://igvteam.github.io/spacewalk/file-format/). This documentation includes:
 
 - **Spacewalk Binary File Format (.sw):**  
   The new, efficient binary format based on HDF5. It offers enhanced performance, improved scalability, and robust support for complex, hierarchical datasets.
@@ -39,7 +40,10 @@ Detailed file format specifications can be found here [Spacewalk Wiki](https://g
 - **Legacy Spacewalk Text Format (.swt):**  
   The original text-based format that is now deprecated. While some legacy files are still in use, it is highly recommended to migrate to the binary format to leverage modern performance improvements and future enhancements.
 
-For comprehensive technical details and migration guidelines, please refer to the [Spacewalk Wiki](https://github.com/igvteam/spacewalk/wiki).
+For comprehensive technical details and migration guidelines, please refer to:
+- [File Format Overview](https://igvteam.github.io/spacewalk/file-format/)
+- [Data Structure Documentation](https://igvteam.github.io/spacewalk/file-format/data-structure/)
+- [Legacy Format Documentation](https://igvteam.github.io/spacewalk/file-format/legacy/)
 
 ## Examples
 
@@ -54,5 +58,3 @@ swt2sw -f ball-and-stick.swt -n ball-and-stick -single-point
 Included in this project is a Google Colab Notebook that is a detailed example of how to convert a simple
 CSV file to Spacewalk Binary File format. Click this button to run the notebook 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/turner/swt2sw/blob/main/docs/CSVtoSpacewalk.ipynb)
-
-
